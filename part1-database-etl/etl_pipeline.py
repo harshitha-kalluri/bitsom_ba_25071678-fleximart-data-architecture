@@ -3,61 +3,57 @@ ETL Pipeline for FlexiMart - Part 1
 Student: Harshitha Kalluri
 """
 
-"""
-ETL Pipeline for FlexiMart
---------------------------------
-Reads raw CSV files, cleans data, fixes quality issues, 
-and loads cleaned data into MySQL.
-"""
-
 import pandas as pd
 import numpy as np
 import re
 from datetime import datetime
 import mysql.connector
 
+
 # =============================
-# 1. EXTRACT – Read CSV Files
+# 1. EXTRACT
 # =============================
 
 def read_csv_file(path):
-    """Reads a CSV file and returns a DataFrame."""
+    """Reads CSV and returns DataFrame."""
     try:
-        df = pd.read_csv(path)
-        return df
+        return pd.read_csv(path)
     except Exception as e:
-        print(f"Error reading file {path}: {e}")
+        print(f"Error reading {path}: {e}")
         return pd.DataFrame()
-    
+
 
 # =============================
-# 2. TRANSFORM – Clean Data
+# 2. TRANSFORM HELPERS
 # =============================
 
 def clean_phone_number(phone):
-    """Standardizes phone numbers into +91-XXXXXXXXXX format."""
+    """Standardize to +91-XXXXXXXXXX."""
     if pd.isna(phone):
         return None
-    
-    # Remove anything that's not numbers
-    digits = re.sub(r'\D', '', str(phone))
 
-    # Keep only last 10 digits
-    digits = digits[-10:]
+    digits = re.sub(r'\D', '', str(phone))
+    digits = digits[-10:]   # keep last 10 digits
 
     return f"+91-{digits}" if len(digits) == 10 else None
 
 
 def clean_date(date_value):
-    """Converts different date formats into YYYY-MM-DD."""
+    """Convert mixed date formats into YYYY-MM-DD."""
     try:
-        return pd.to_datetime(date_value, errors='coerce').strftime("%Y-%m-%d")
+        dt = pd.to_datetime(date_value, errors="coerce")
+        if pd.isna(dt):
+            return None
+        return dt.strftime("%Y-%m-%d")
     except:
         return None
 
 
+# =============================
+# 2A. TRANSFORM CUSTOMERS
+# =============================
+
 def transform_customers(df):
-    """Cleans customer data based on the assignment rules."""
 
     report = {}
 
@@ -65,130 +61,104 @@ def transform_customers(df):
     report["duplicates_removed"] = df.duplicated().sum()
     df = df.drop_duplicates()
 
-    # Handle missing emails → fill with 'unknown@email.com'
-    df['email'] = df['email'].fillna("unknown@email.com")
+    # Remove original text ID (C001...) because DB has AUTO_INCREMENT
+    if "customer_id" in df.columns:
+        df = df.drop(columns=["customer_id"])
+
+    # Handle missing email
+    df["email"] = df["email"].fillna("unknown@email.com")
 
     # Standardize phone
-    df['phone'] = df['phone'].apply(clean_phone_number)
+    df["phone"] = df["phone"].apply(clean_phone_number)
 
-    # Fix date formats
-    df['registration_date'] = df['registration_date'].apply(clean_date)
+    # Fix date
+    df["registration_date"] = df["registration_date"].apply(clean_date)
 
-    # Standardize city names (capitalize)
-    df['city'] = df['city'].str.title()
+    # Clean city format
+    df["city"] = df["city"].str.title()
 
-    report["missing_after_cleaning"] = df.isna().sum().to_dict()
-    report["final_record_count"] = len(df)
-
-    return df, report
-
-
-def transform_products(df):
-    """Cleans product data."""
-
-    report = {}
-
-    df = df.drop_duplicates()
-
-    # Fill missing price with median
-    df['price'] = df['price'].fillna(df['price'].median())
-
-    # Fill missing stock with zero
-    df['stock_quantity'] = df['stock_quantity'].fillna(0)
-
-    # Standardize categories
-    df['category'] = df['category'].str.strip().str.capitalize()
-
-    report["final_record_count"] = len(df)
-    return df, report
-
-
-def transform_sales(df):
-    """Cleans sales data."""
-
-    report = {}
-
-    df = df.drop_duplicates()
-
-    # Convert all dates
-    df['order_date'] = df['order_date'].apply(clean_date)
-
-    # Remove rows where customer/product ID missing
-    df = df.dropna(subset=['customer_id', 'product_id'])
-
-    report["final_record_count"] = len(df)
+    report["final_records"] = len(df)
     return df, report
 
 
 # =============================
-# 3. LOAD – Load into MySQL
+# 2B. TRANSFORM PRODUCTS
+# =============================
+
+def transform_products(df):
+
+    report = {}
+
+    df = df.drop_duplicates()
+
+    if "product_id" in df.columns:
+        df = df.drop(columns=["product_id"])
+
+    df["price"] = df["price"].fillna(df["price"].median())
+    df["stock_quantity"] = df["stock_quantity"].fillna(0)
+    df["category"] = df["category"].str.strip().str.capitalize()
+
+    report["final_records"] = len(df)
+    return df, report
+
+
+# =============================
+# 3. LOAD TO MYSQL
 # =============================
 
 def load_to_mysql(df, table_name):
-    """Loads cleaned DataFrame into MySQL database."""
+    """Insert DataFrame into MySQL."""
 
     try:
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="YOUR_PASSWORD",   # ← Update this
+            password="Harshitha@123",     # ←password given here
             database="fleximart"
         )
-
         cursor = conn.cursor()
 
-        # Insert each row
         for _, row in df.iterrows():
             cols = ",".join(df.columns)
-            vals = tuple(row.values)
-            placeholders = ",".join(["%s"] * len(vals))
-
+            placeholders = ",".join(["%s"] * len(row))
             query = f"INSERT INTO {table_name} ({cols}) VALUES ({placeholders})"
-            cursor.execute(query, vals)
+            cursor.execute(query, tuple(row.values))
 
         conn.commit()
-        cursor.close()
-        conn.close()
 
         print(f"Inserted {len(df)} rows into {table_name}")
 
     except mysql.connector.Error as err:
         print("MySQL Error:", err)
 
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # =============================
-# MAIN PIPELINE
+# MAIN
 # =============================
 
 if __name__ == "__main__":
-    
+
     print("\nStarting ETL Pipeline...\n")
 
     # Extract
     customers = read_csv_file("data/customers_raw.csv")
     products = read_csv_file("data/products_raw.csv")
-    sales = read_csv_file("data/sales_raw.csv")
 
     # Transform
     customers_clean, cust_report = transform_customers(customers)
     products_clean, prod_report = transform_products(products)
-    sales_clean, sales_report = transform_sales(sales)
 
-    # Print Data Quality Report
-    print("\n=== DATA QUALITY REPORT ===")
-    print("Customers:", cust_report)
-    print("Products:", prod_report)
-    print("Sales:", sales_report)
-
-    # Save report to file
+    # Data Quality Report
     with open("part1-database-etl/data_quality_report.txt", "w") as f:
-        f.write("CUSTOMERS:\n" + str(cust_report) + "\n\n")
-        f.write("PRODUCTS:\n" + str(prod_report) + "\n\n")
-        f.write("SALES:\n" + str(sales_report) + "\n\n")
+        f.write("CUSTOMERS REPORT:\n" + str(cust_report) + "\n\n")
+        f.write("PRODUCTS REPORT:\n" + str(prod_report) + "\n\n")
 
-    # Load to MySQL
+    # Load
     load_to_mysql(customers_clean, "customers")
     load_to_mysql(products_clean, "products")
-    load_to_mysql(sales_clean, "orders")  # if required later
 
-    print("\nETL Pipeline Completed Successfully.")
+    print("\nETL Pipeline Complete.")
