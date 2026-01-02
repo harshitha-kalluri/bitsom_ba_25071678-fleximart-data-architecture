@@ -66,7 +66,21 @@ def transform_customers(df):
         df = df.drop(columns=["customer_id"])
 
     # Handle missing email
-    df["email"] = df["email"].fillna("unknown@email.com")
+    #df['email'] = df['email'].fillna("unknown@email.com")
+    df['email'] = df.apply(
+    lambda row: row['email'] if pd.notna(row['email']) 
+                else f"unknown_{row.name}@email.com",
+    axis=1)
+
+    #df['email'] = df.apply(
+    #lambda row: row['email'] if pd.notna(row['email']) else f"{row['customer_id'].lower()}@unknown.com",
+    #axis=1)
+
+
+    #df['email'] = df.apply(
+    #lambda row: row['email'] if pd.notna(row['email']) 
+    #else f"unknown_{row['customer_id']}@email.com",
+    #axis=1)
 
     # Standardize phone
     df["phone"] = df["phone"].apply(clean_phone_number)
@@ -143,6 +157,7 @@ def load_to_mysql(df, table_name):
 if __name__ == "__main__":
 
     print("\nStarting ETL Pipeline...\n")
+    
 
     # Extract
     customers = read_csv_file("data/customers_raw.csv")
@@ -151,6 +166,8 @@ if __name__ == "__main__":
     # Transform
     customers_clean, cust_report = transform_customers(customers)
     products_clean, prod_report = transform_products(products)
+
+    print("Customer Columns:", customers.columns.tolist())
 
     # Data Quality Report
     with open("part1-database-etl/data_quality_report.txt", "w") as f:

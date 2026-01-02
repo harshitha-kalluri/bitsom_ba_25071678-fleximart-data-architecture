@@ -1,0 +1,6 @@
+CUSTOMERS REPORT:
+{'duplicates_removed': 1, 'final_records': 25}
+
+PRODUCTS REPORT:
+{'final_records': 20}
+
