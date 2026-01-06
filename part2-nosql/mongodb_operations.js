@@ -48,7 +48,7 @@ db.products.updateOne(
         user: "U999",
         rating: 4,
         comment: "Good value",
-        date: new Date()
+        date: ISODate()
       }
     }
   }

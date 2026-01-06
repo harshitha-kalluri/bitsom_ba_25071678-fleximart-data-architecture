@@ -1,6 +1,14 @@
-CUSTOMERS REPORT:
-{'duplicates_removed': 1, 'final_records': 25}
+CUSTOMERS REPORT
+----------------------------------------
+original_records: 26
+duplicate_records: 1
+duplicates_removed: 1
+null_counts: {'first_name': 0, 'last_name': 0, 'email': 0, 'phone': 0, 'city': 0, 'registration_date': 0}
+final_records: 25
 
-PRODUCTS REPORT:
-{'final_records': 20}
-
+PRODUCTS REPORT
+----------------------------------------
+original_records: 20
+duplicate_records: 0
+null_counts: {'product_id': 0, 'product_name': 0, 'category': 0, 'price': 3, 'stock_quantity': 1}
+final_records: 20

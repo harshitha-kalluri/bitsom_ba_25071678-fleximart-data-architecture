@@ -57,6 +57,11 @@ def clean_date(date_value):
 def transform_customers(df):
 
     report = {}
+    original_len = len(df)
+
+    report["original_records"] = original_len
+    report["duplicate_records"] = df.duplicated().sum()
+
 
     # Remove duplicates
     report["duplicates_removed"] = df.duplicated().sum()
@@ -68,20 +73,33 @@ def transform_customers(df):
 
     # Handle missing email
     #df['email'] = df['email'].fillna("unknown@email.com")
-    df['email'] = df.apply(
-    lambda row: row['email'] if pd.notna(row['email']) 
-                else f"unknown_{row.name}@email.com",
-    axis=1)
-
-    #df['email'] = df.apply(
-    #lambda row: row['email'] if pd.notna(row['email']) else f"{row['customer_id'].lower()}@unknown.com",
-    #axis=1)
 
 
-    #df['email'] = df.apply(
-    #lambda row: row['email'] if pd.notna(row['email']) 
-    #else f"unknown_{row['customer_id']}@email.com",
-    #axis=1)
+    # Email cleaning block
+
+    df["email"] = df["email"].astype(str)
+
+    mask = df["email"].str.strip().isin(["", "nan", "None"])
+
+    df.loc[mask, "email"] = (
+        "unknown_" + df.loc[mask].index.astype(str) + "@email.com")
+    
+    #makes emails unique , since I faced an error adding code to handle it.
+
+    # Make emails unique to satisfy MySQL UNIQUE constraint
+    email_counts = df["email"].value_counts()
+
+    duplicates = email_counts[email_counts > 1].index
+
+    for email in duplicates:
+        dup_idx = df[df["email"] == email].index
+        # keep first email unchanged, modify the rest
+        for i, idx in enumerate(dup_idx[1:], start=1):
+            df.at[idx, "email"] = f"{email.split('@')[0]}_{i}@{email.split('@')[1]}"
+
+    #other cleaning 
+    report["null_counts"] = df.isna().sum().to_dict()
+
 
     # Standardize phone
     df["phone"] = df["phone"].apply(clean_phone_number)
@@ -103,8 +121,13 @@ def transform_customers(df):
 def transform_products(df):
 
     report = {}
+    original_len = len(df)
+
+    report["original_records"] = original_len
+    report["duplicate_records"] = df.duplicated().sum()
 
     df = df.drop_duplicates()
+    report["null_counts"] = df.isna().sum().to_dict()
 
     if "product_id" in df.columns:
         df = df.drop(columns=["product_id"])
@@ -172,8 +195,21 @@ if __name__ == "__main__":
 
     # Data Quality Report
     with open("part1-database-etl/data_quality_report.txt", "w") as f:
-        f.write("CUSTOMERS REPORT:\n" + str(cust_report) + "\n\n")
-        f.write("PRODUCTS REPORT:\n" + str(prod_report) + "\n\n")
+        f.write("CUSTOMERS REPORT\n")
+        f.write("-" * 40 + "\n")
+        for k, v in cust_report.items():
+            f.write(f"{k}: {v}\n")
+
+        f.write("\nPRODUCTS REPORT\n")
+        f.write("-" * 40 + "\n")
+        for k, v in prod_report.items():
+            f.write(f"{k}: {v}\n")
+
+
+    #Data Quality Report (optional method)
+    #with open("part1-database-etl/data_quality_report.txt", "w") as f:
+     #   f.write("CUSTOMERS REPORT:\n" + str(cust_report) + "\n\n")
+      #  f.write("PRODUCTS REPORT:\n" + str(prod_report) + "\n\n")
 
     # Load
     load_to_mysql(customers_clean, "customers")
