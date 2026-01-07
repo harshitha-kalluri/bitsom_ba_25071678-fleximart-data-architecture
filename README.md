@@ -48,15 +48,15 @@ bitsom_ba_25071678-fleximart-data-architecture/
 
 # Technologies Used
 
-Python 3.x (pandas, mysql-connector-python)
+- Python 3.x (pandas, mysql-connector-python)
 
-MySQL 8.0
+- MySQL 8.0
 
-MongoDB 6.0
+- MongoDB 6.0
 
-MongoDB Compass
+- MongoDB Compass
 
-Git & GitHub
+- Git & GitHub
 
 # Part 1: Database ETL Pipeline
 # Description
