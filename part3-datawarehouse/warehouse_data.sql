@@ -1,6 +1,8 @@
----DIM_DATE
 USE fleximart_dw;
 
+-- =========================
+-- dim_date (30 dates: Jan–Feb 2024)
+-- =========================
 INSERT INTO dim_date VALUES
 (20240101,'2024-01-01','Monday',1,1,'January','Q1',2024,0),
 (20240102,'2024-01-02','Tuesday',2,1,'January','Q1',2024,0),
@@ -17,11 +19,6 @@ INSERT INTO dim_date VALUES
 (20240113,'2024-01-13','Saturday',13,1,'January','Q1',2024,1),
 (20240114,'2024-01-14','Sunday',14,1,'January','Q1',2024,1),
 (20240115,'2024-01-15','Monday',15,1,'January','Q1',2024,0),
-(20240116,'2024-01-16','Tuesday',16,1,'January','Q1',2024,0),
-(20240117,'2024-01-17','Wednesday',17,1,'January','Q1',2024,0),
-(20240118,'2024-01-18','Thursday',18,1,'January','Q1',2024,0),
-(20240119,'2024-01-19','Friday',19,1,'January','Q1',2024,0),
-(20240120,'2024-01-20','Saturday',20,1,'January','Q1',2024,1),
 (20240201,'2024-02-01','Thursday',1,2,'February','Q1',2024,0),
 (20240202,'2024-02-02','Friday',2,2,'February','Q1',2024,0),
 (20240203,'2024-02-03','Saturday',3,2,'February','Q1',2024,1),
@@ -31,92 +28,92 @@ INSERT INTO dim_date VALUES
 (20240207,'2024-02-07','Wednesday',7,2,'February','Q1',2024,0),
 (20240208,'2024-02-08','Thursday',8,2,'February','Q1',2024,0),
 (20240209,'2024-02-09','Friday',9,2,'February','Q1',2024,0),
-(20240210,'2024-02-10','Saturday',10,2,'February','Q1',2024,1);
+(20240210,'2024-02-10','Saturday',10,2,'February','Q1',2024,1),
+(20240211,'2024-02-11','Sunday',11,2,'February','Q1',2024,1),
+(20240212,'2024-02-12','Monday',12,2,'February','Q1',2024,0),
+(20240213,'2024-02-13','Tuesday',13,2,'February','Q1',2024,0),
+(20240214,'2024-02-14','Wednesday',14,2,'February','Q1',2024,0),
+(20240215,'2024-02-15','Thursday',15,2,'February','Q1',2024,0);
 
---DIM_PRODUCT (15 products, 3 categories)
-INSERT INTO dim_product (product_id, product_name, category, subcategory, unit_price) VALUES
-('P001','Laptop Pro','Electronics','Computing',75000),
-('P002','Smartphone X','Electronics','Mobile',45000),
-('P003','Bluetooth Speaker','Electronics','Audio',8000),
-('P004','Wireless Mouse','Electronics','Accessories',1500),
-('P005','LED TV','Electronics','Home Entertainment',55000),
+-- =========================
+-- dim_product (15 products)
+-- =========================
+INSERT INTO dim_product (product_id,product_name,category,subcategory,unit_price) VALUES
+('P001','Laptop Pro','Electronics','Laptop',50000),
+('P002','Smartphone X','Electronics','Mobile',30000),
+('P003','Headphones','Electronics','Accessories',2000),
+('P004','Office Chair','Furniture','Chair',8000),
+('P005','Dining Table','Furniture','Table',25000),
+('P006','Notebook','Stationery','Paper',100),
+('P007','Pen Set','Stationery','Writing',300),
+('P008','LED TV','Electronics','TV',45000),
+('P009','Washing Machine','Electronics','Appliance',38000),
+('P010','Sofa','Furniture','Seating',60000),
+('P011','Bookshelf','Furniture','Storage',12000),
+('P012','Backpack','Accessories','Bag',2500),
+('P013','Shoes','Fashion','Footwear',4000),
+('P014','T-Shirt','Fashion','Clothing',1200),
+('P015','Jeans','Fashion','Clothing',2500);
 
-('P006','Running Shoes','Fashion','Footwear',5000),
-('P007','Leather Jacket','Fashion','Clothing',12000),
-('P008','Jeans','Fashion','Clothing',3000),
-('P009','Handbag','Fashion','Accessories',7000),
-('P010','Sports Watch','Fashion','Wearables',9500),
+-- =========================
+-- dim_customer (12 customers)
+-- =========================
+INSERT INTO dim_customer (customer_id,customer_name,city,state,customer_segment) VALUES
+('C001','Amit Sharma','Delhi','Delhi','Retail'),
+('C002','Neha Verma','Mumbai','Maharashtra','Retail'),
+('C003','Rahul Singh','Bangalore','Karnataka','Retail'),
+('C004','Pooja Mehta','Ahmedabad','Gujarat','Retail'),
+('C005','Karan Patel','Surat','Gujarat','Retail'),
+('C006','Sneha Roy','Kolkata','West Bengal','Retail'),
+('C007','Rohit Gupta','Delhi','Delhi','Corporate'),
+('C008','Anjali Jain','Jaipur','Rajasthan','Retail'),
+('C009','Vikas Malhotra','Chandigarh','Punjab','Corporate'),
+('C010','Simran Kaur','Amritsar','Punjab','Retail'),
+('C011','Arjun Nair','Kochi','Kerala','Retail'),
+('C012','Priya Iyer','Chennai','Tamil Nadu','Corporate');
 
-('P011','Office Chair','Furniture','Office',15000),
-('P012','Dining Table','Furniture','Home',40000),
-('P013','Bookshelf','Furniture','Storage',8000),
-('P014','Sofa Set','Furniture','Living Room',90000),
-('P015','Bed Frame','Furniture','Bedroom',60000);
-
---DIM_CUSTOMER (12 customers, 4 cities)
-
-INSERT INTO dim_customer (customer_id, customer_name, city, state, customer_segment) VALUES
-('C001','Rahul Sharma','Mumbai','Maharashtra','Premium'),
-('C002','Anita Verma','Delhi','Delhi','Regular'),
-('C003','Suresh Reddy','Hyderabad','Telangana','Premium'),
-('C004','Neha Singh','Bangalore','Karnataka','Regular'),
-('C005','Amit Patel','Mumbai','Maharashtra','Corporate'),
-('C006','Kiran Rao','Hyderabad','Telangana','Regular'),
-('C007','Pooja Mehta','Delhi','Delhi','Premium'),
-('C008','Rohit Jain','Bangalore','Karnataka','Corporate'),
-('C009','Sneha Kulkarni','Mumbai','Maharashtra','Regular'),
-('C010','Arjun Nair','Bangalore','Karnataka','Premium'),
-('C011','Manish Gupta','Delhi','Delhi','Regular'),
-('C012','Divya Iyer','Hyderabad','Telangana','Corporate');
-
---FACT_SALES (40 transactions, realistic patterns)
-
+-- =========================
+-- fact_sales (40 transactions)
+-- =========================
 INSERT INTO fact_sales
-(date_key, product_key, customer_key, quantity_sold, unit_price, discount_amount, total_amount)
-VALUES
-(20240106,1,1,2,75000,5000,145000),
-(20240107,2,2,1,45000,0,45000),
-(20240113,3,3,3,8000,500,23500),
-(20240114,4,4,2,1500,0,3000),
-(20240120,5,5,1,55000,2000,53000),
-
-(20240203,6,6,2,5000,0,10000),
-(20240204,7,7,1,12000,1000,11000),
-(20240210,8,8,3,3000,0,9000),
-(20240210,9,9,1,7000,500,6500),
-(20240210,10,10,2,9500,0,19000),
-
-(20240105,11,11,1,15000,0,15000),
-(20240106,12,12,1,40000,5000,35000),
-(20240107,13,1,2,8000,0,16000),
-(20240113,14,2,1,90000,10000,80000),
-(20240114,15,3,1,60000,0,60000),
-
-(20240115,1,4,1,75000,0,75000),
-(20240116,2,5,2,45000,2000,88000),
-(20240117,3,6,1,8000,0,8000),
-(20240118,4,7,3,1500,0,4500),
-(20240119,5,8,1,55000,3000,52000),
-
-(20240120,6,9,2,5000,0,10000),
-(20240120,7,10,1,12000,0,12000),
-(20240203,8,11,2,3000,0,6000),
-(20240203,9,12,1,7000,500,6500),
-(20240204,10,1,1,9500,0,9500),
-
-(20240205,11,2,1,15000,0,15000),
-(20240206,12,3,1,40000,4000,36000),
-(20240207,13,4,2,8000,0,16000),
-(20240208,14,5,1,90000,15000,75000),
-(20240209,15,6,1,60000,0,60000),
-
-(20240210,1,7,2,75000,5000,145000),
-(20240210,2,8,1,45000,0,45000),
-(20240210,3,9,3,8000,500,23500),
-(20240210,4,10,2,1500,0,3000),
-(20240210,5,11,1,55000,2000,53000),
-(20240210,6,12,2,5000,0,10000),
-(20240210,7,1,1,12000,1000,11000),
-(20240210,8,2,3,3000,0,9000),
-(20240210,9,3,1,7000,500,6500),
-(20240210,10,4,2,9500,0,19000);
+(date_key,product_key,customer_key,quantity_sold,unit_price,discount_amount,total_amount) VALUES
+(20240101,1,1,1,50000,0,50000),
+(20240102,2,2,2,30000,2000,58000),
+(20240103,3,3,3,2000,0,6000),
+(20240104,4,4,1,8000,0,8000),
+(20240105,5,5,1,25000,1000,24000),
+(20240106,6,6,10,100,0,1000),
+(20240107,7,7,5,300,0,1500),
+(20240108,8,8,1,45000,3000,42000),
+(20240109,9,9,1,38000,2000,36000),
+(20240110,10,10,1,60000,5000,55000),
+(20240111,11,11,2,12000,0,24000),
+(20240112,12,12,2,2500,0,5000),
+(20240113,13,1,3,4000,0,12000),
+(20240114,14,2,4,1200,0,4800),
+(20240115,15,3,2,2500,0,5000),
+(20240201,1,4,1,50000,0,50000),
+(20240202,2,5,1,30000,0,30000),
+(20240203,3,6,2,2000,0,4000),
+(20240204,4,7,2,8000,0,16000),
+(20240205,5,8,1,25000,0,25000),
+(20240206,6,9,8,100,0,800),
+(20240207,7,10,6,300,0,1800),
+(20240208,8,11,1,45000,0,45000),
+(20240209,9,12,1,38000,2000,36000),
+(20240210,10,1,1,60000,4000,56000),
+(20240211,11,2,1,12000,0,12000),
+(20240212,12,3,3,2500,0,7500),
+(20240213,13,4,2,4000,0,8000),
+(20240214,14,5,5,1200,0,6000),
+(20240215,15,6,2,2500,0,5000),
+(20240102,4,7,1,8000,0,8000),
+(20240103,5,8,1,25000,0,25000),
+(20240104,6,9,15,100,0,1500),
+(20240105,7,10,4,300,0,1200),
+(20240106,8,11,1,45000,0,45000),
+(20240107,9,12,1,38000,0,38000),
+(20240108,10,1,1,60000,5000,55000),
+(20240109,11,2,2,12000,0,24000),
+(20240110,12,3,2,2500,0,5000),
+(20240111,13,4,3,4000,0,12000);
