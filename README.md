@@ -2,39 +2,48 @@
 FlexiMart Data Architecture Project
 
 Student Name: Harshitha Kalluri
-Student ID: 25071678
-Email: (add your college email here)
+Student ID: BITSoM_BA_25071678
+Email: harshithakalluri4011@gmail.com
 Course: Data Architecture Design & Implementation
-Submission Date: (add date)
+Submission Date: 08 Jan 2026
 
-Project Overview
+# Project Overview
 
 This project implements an end-to-end data architecture solution for FlexiMart, covering transactional ETL processing, NoSQL modeling, and analytical data warehousing. The goal is to design scalable systems that support historical sales analysis, customer insights, and business decision-making using relational, NoSQL, and dimensional modeling techniques.
 
 The project is structured into three parts:
 
-Relational ETL and data quality handling
+-Relational ETL and data quality handling
 
-NoSQL modeling and MongoDB analytics
+-NoSQL modeling and MongoDB analytics
 
-Data warehouse design using a star schema with OLAP queries
+-Data warehouse design using a star schema with OLAP queries
 
-Repository Structure
+# Repository Structure
 
+bitsom_ba_25071678-fleximart-data-architecture/
 ├── part1-database-etl/
-│   ├── etl_pipeline.py
-│   ├── schema_documentation.md
-│   ├── business_queries.sql
-│   └── data_quality_report.txt
+│ ├── etl_pipeline.py
+│ ├── schema_documentation.md
+│ ├── business_queries.sql
+│ ├── data_quality_report.txt
+│ └── requirements.txt
+│
 ├── part2-nosql/
-│   ├── nosql_analysis.md
-│   ├── mongodb_operations.js
-│   └── products_catalog.json
+│ ├── nosql_analysis.md
+│ ├── mongodb_operations.js
+│ └── products_catalog.json
+│
 ├── part3-datawarehouse/
-│   ├── star_schema_design.md
-│   ├── warehouse_schema.sql
-│   ├── warehouse_data.sql
-│   └── analytics_queries.sql
+│ ├── star_schema_design.md
+│ ├── warehouse_schema.sql
+│ ├── warehouse_data.sql
+│ └── analytics_queries.sql
+│
+├── screenshots/
+│ └── README.md
+│
+├── .gitignore
 └── README.md
 
 # Technologies Used
@@ -125,6 +134,9 @@ Git & GitHub
 -analytics_queries.sql
 
 # Setup Instructions
+> Note: SQL scripts were executed using MySQL Workbench and MongoDB Compass.
+> The CLI commands below are provided as an alternative execution method.
+
 # Database Setup
 
 # Create databases
